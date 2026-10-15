@@ -61,7 +61,55 @@ chmod +x JALANKAN.sh
 ```
 atau `powershell -ExecutionPolicy Bypass -File .\JALANKAN.ps1` bila PowerShell tersedia.
 
-### Pemecahan Masalah
+### MENARUH PROYEK INI KE GITHUB
+
+### Cara tercepat (Windows)
+
+Klik dua kali **`UNGGAH-KE-GITHUB.bat`**
+
+Skrip akan meminta Anda masuk ke GitHub (browser terbuka sekali saja), membuat
+repository, lalu mengunggah seluruh kode secara otomatis. Alamat repository Anda
+akan ditampilkan di layar — buka alamat itu di browser untuk melihat kodenya.
+
+### Manual
+
+```bash
+# 1. Login (sekali saja)
+gh auth login --hostname github.com --git-protocol https --web
+
+# 2. Buat repository dan unggah
+gh repo create probeng --public --source=. --remote=origin --push
+
+# 3. Perbarui bila ada perubahan
+git add .
+git commit -m "Deskripsi perubahan"
+git push
+```
+
+### Menyalakan proyek yang diunduh dari GitHub
+
+```bash
+git clone https://github.com/akun-anda/probeng.git
+cd probeng
+composer install        # memasang library, folder vendor tidak ikut di-commit
+copy .env.example .env  # Windows   |   cp .env.example .env untuk Linux/macOS
+JALANKAN.bat
+```
+
+`JALANKAN.bat` otomatis menjalankan `composer install` bila folder `vendor`
+belum ada, sehingga cukup klik dua kali setelah menyalin `.env`.
+
+### Apa yang tidak ikut di-commit
+
+| Item | Alasan |
+|---|---|
+| `.env` | Konfigurasi lokal, hanya `.env.example` yang di-commit |
+| `vendor/` | Library hasil `composer install` (3.056 file) |
+| `writable/logs`, `writable/cache`, `writable/session` | Berkas sementara saat aplikasi berjalan |
+
+---
+
+## Pemecahan Masalah
 
 | Gejala | Penyebab & Solusi |
 |---|---|
