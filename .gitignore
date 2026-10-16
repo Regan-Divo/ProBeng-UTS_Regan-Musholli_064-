@@ -157,7 +157,5 @@ _modules/*
 /UNGGAH-KE-GITHUB.bat
 
 # Berkas bawaan App Starter yang tidak dipakai
-/builds/
-/env/
 /tests/
 /phpunit.dist.xml
