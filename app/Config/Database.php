@@ -200,5 +200,18 @@ class Database extends Config
         if (ENVIRONMENT === 'testing') {
             $this->defaultGroup = 'tests';
         }
+
+        // ---------------------------------------------------------------
+        //  Mode ringan (SQLite): PDO SQLite hanya menerima path absolut,
+        //  sehingga path relatif dari .env diubah menjadi absolut di sini.
+        // ---------------------------------------------------------------
+        if (strtolower((string) ($this->default['DBDriver'] ?? '')) === 'sqlite3') {
+            $berkas = trim((string) ($this->default['database'] ?? ''), "'\"");
+
+            if ($berkas !== '' && $berkas !== ':memory:'
+                && ! preg_match('#^([A-Za-z]:[\\\\/]|[\\\\/])#', $berkas)) {
+                $this->default['database'] = ROOTPATH . $berkas;
+            }
+        }
     }
 }
