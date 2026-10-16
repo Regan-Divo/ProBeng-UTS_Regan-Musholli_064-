@@ -3,9 +3,9 @@ REM ===================================================================
 REM  ProBeng - Sistem Manajemen Servis Suku Cadang Bengkel
 REM  Menjalankan aplikasi CodeIgniter 4 di localhost:8080
 REM
-REM  Mode otomatis:
-REM    - MySQL tersedia  : memakai MySQL/MariaDB (sesuai materi RPL)
-REM    - MySQL tidak ada : memakai SQLite (database berupa satu berkas)
+REM  Mode database dipilih otomatis:
+REM    - MySQL tersedia  : memakai MySQL/MariaDB, sesuai materi RPL
+REM    - MySQL tidak ada : memakai SQLite, database satu berkas
 REM ===================================================================
 
 title ProBeng - CodeIgniter 4
@@ -56,14 +56,31 @@ echo  [OK] PHP  : !PHP!
 echo.
 
 REM ---------------------------------------------------------------
-REM  1b. Memasang dependency bila folder vendor belum ada
-REM       (terjadi ketika proyek diunduh dari GitHub)
+REM  2. Memasang dependency bila folder vendor belum ada
+REM     Terjadi ketika proyek diunduh dari GitHub.
 REM ---------------------------------------------------------------
 if not exist "%~dp0vendor\autoload.php" (
     echo  [i] Folder vendor belum ada, memasang dependency ...
     echo.
+
+    REM  Cari Composer. Nama variabel sengaja bukan COMPOSER karena
+    REM  nama itu dipakai Composer sebagai environment variable.
+    set "CMDCMPR="
+
     where composer >nul 2>&1
-    if errorlevel 1 (
+    if not errorlevel 1 set "CMDCMPR=composer"
+
+    if not defined CMDCMPR (
+        for %%F in (
+            "C:\laragon\bin\composer\composer.phar"
+            "C:\ProgramData\ComposerSetup\bin\composer.phar"
+            "%~dp0composer.phar"
+        ) do (
+            if not defined CMDCMPR if exist "%%~F" set "CMDCMPR=%%~F"
+        )
+    )
+
+    if not defined CMDCMPR (
         echo  [ERROR] Composer tidak ditemukan.
         echo.
         echo  Pasang Composer dari https://getcomposer.org/Composer-Setup.exe
@@ -72,12 +89,18 @@ if not exist "%~dp0vendor\autoload.php" (
         pause
         exit /b 1
     )
-    composer install --no-interaction
+
+    if "!CMDCMPR!"=="composer" (
+        composer install --no-dev --no-interaction
+    ) else (
+        echo  [OK] Composer : !CMDCMPR!
+        "!PHP!" "!CMDCMPR!" install --no-dev --no-interaction
+    )
     echo.
 )
 
 REM ---------------------------------------------------------------
-REM  2. Menentukan mode database
+REM  3. Menentukan mode database
 REM ---------------------------------------------------------------
 set "CEKPORT=%~dp0cek-port.ps1"
 
@@ -87,7 +110,7 @@ if not errorlevel 1 set "DBUP=1"
 
 if "!DBUP!"=="1" goto :mode_mysql
 
-REM  MySQL tidak terdeteksi, coba nyalakan Laragon / XAMPP
+REM  MySQL belum jalan - coba nyalakan Laragon atau XAMPP
 echo  [i] MySQL belum berjalan, mencoba menyalakan ...
 if exist "C:\laragon\laragon.exe" (
     start "" "C:\laragon\laragon.exe" start
@@ -107,7 +130,7 @@ goto :mode_ringan
 echo  [OK] MySQL : port 3306 aktif
 echo.
 echo  ============================================================
-echo    Menyiapkan database (MySQL) ...
+echo    Menyiapkan database MySQL ...
 echo  ============================================================
 echo.
 "!PHP!" spark install:database
@@ -117,11 +140,11 @@ goto :jalan
 :mode_ringan
 echo.
 echo  ============================================================
-echo   MODE RINGAN  (tanpa MySQL)
+echo   MODE RINGAN - tanpa MySQL
 echo  ============================================================
 echo.
-echo   Server database tidak ditemukan, jadi ProBeng memakai
-echo   SQLite: database berupa satu berkas di dalam folder proyek.
+echo   Server database tidak ditemukan, jadi ProBeng memakai SQLite:
+echo   database berupa satu berkas di dalam folder proyek.
 echo.
 echo   Tidak perlu XAMPP, Laragon, atau login database.
 echo   Untuk memakai MySQL, nyalakan MySQL lalu jalankan ulang.
@@ -134,7 +157,7 @@ echo.
 goto :jalan
 
 REM ---------------------------------------------------------------
-REM  3. Menjalankan server
+REM  4. Menjalankan server
 REM ---------------------------------------------------------------
 :jalan
 echo  ============================================================
