@@ -159,3 +159,12 @@ _modules/*
 # Berkas bawaan App Starter yang tidak dipakai
 /tests/
 /phpunit.dist.xml
+
+#-------------------------
+# Berkas pendukung yang tidak diperlukan pada repository
+#-------------------------
+/builds
+/env
+/LICENSE
+/JALANKAN.ps1
+/JALANKAN.sh
