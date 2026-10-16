@@ -142,3 +142,22 @@ _modules/*
 
 # Berkas .env tidak ikut di-commit demi keamanan. Gunakan .env.example sebagai acuan.
 
+
+#-------------------------
+# Hanya kode yang diunggah ke GitHub
+#-------------------------
+
+# Diagram perancangan & screenshot aplikasi (lokal saja)
+/docs/
+
+# Dokumen pendamping (lokal saja)
+/DOKUMENTASI.md
+
+# Skrip pengunggah (sudah tidak dipakai)
+/UNGGAH-KE-GITHUB.bat
+
+# Berkas bawaan App Starter yang tidak dipakai
+/builds/
+/env/
+/tests/
+/phpunit.dist.xml
